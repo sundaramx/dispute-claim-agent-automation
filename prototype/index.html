@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign in · Dispute Console</title><link rel="stylesheet" href="styles.css?v=6"><script src="app.js?v=6" defer></script></head>
+<body data-page="signin">
+<div class="signin">
+  <section class="hero">
+    <div class="brand" style="color:#fff;padding:0"><span class="mark" style="background:rgba(255,255,255,.18)">D</span><span>Dispute Console<small style="color:rgba(255,255,255,.75)">Card disputes · Reg E / Reg Z</small></span></div>
+    <div>
+      <h1>Agents do the legwork. People make the calls.</h1>
+      <p>Intake, triage, evidence and drafting run automatically. Every credit, chargeback and customer letter waits for a human, and every step is on a tamper-evident record.</p>
+      <ul><li>Deadline-aware queue with Reg E / Reg Z clocks</li><li>Four-eyes approvals with Supervisor sign-off over $500</li><li>A case copilot that only answers from the record, with citations</li></ul>
+    </div>
+    <p class="small" style="opacity:.7">Clickable prototype · synthetic data only · mock “now” Wed Oct 28, 2026 09:30 ET</p>
+  </section>
+  <section class="panel">
+    <h2 style="font-size:22px">Sign in</h2>
+    <p class="muted">Pick a seeded user. Locally, the dev token issuer signs you in; production uses your company’s SSO.</p>
+    <div class="user-pick">
+      <a href="queue.html" data-pick-role="supervisor"><span class="avatar">S1</span><span><b>supervisor1 · Supervisor</b><span>Approves over $500 and low-confidence actions, QA and pre-arb queues</span></span><span class="go">→</span></a>
+      <a href="queue.html" data-pick-role="analyst"><span class="avatar">A1</span><span><b>analyst1 · Analyst</b><span>Works cases and approves up to $500, never their own edits</span></span><span class="go">→</span></a>
+      <a href="audit.html" data-pick-role="auditor"><span class="avatar">CA</span><span><b>auditor1 · Compliance Auditor</b><span>Read-only cases and audit trail, chain verification and replay</span></span><span class="go">→</span></a>
+      <a href="admin.html" data-pick-role="admin"><span class="avatar">AD</span><span><b>admin1 · Admin</b><span>Users, thresholds, LLM routing, auto-approve. Cannot approve cases</span></span><span class="go">→</span></a>
+    </div>
+    <div class="callout info">Want the cardholder’s side? Open the <a href="chat.html" style="margin:0 4px">portal chat demo</a>, where a cardholder reports a charge to the dispute assistant.</div>
+  </section>
+</div>
+</body></html>

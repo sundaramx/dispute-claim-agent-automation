@@ -1,0 +1,80 @@
+[importlinter]
+root_packages =
+    dca
+    dca_vault
+    dca_mocks
+include_external_packages = True
+
+[importlinter:contract:agents-no-effects]
+name = agents may not import effectful adapters or provider SDKs
+type = forbidden
+source_modules =
+    dca.agents
+forbidden_modules =
+    dca.adapters.ledger
+    dca.adapters.network
+    dca.adapters.notify
+    dca.approvals.execute
+    anthropic
+    google
+    openai
+allow_indirect_imports = True
+
+[importlinter:contract:pure-core]
+name = policy, regclock and confidence are pure
+type = forbidden
+source_modules =
+    dca.policy
+    dca.regclock
+    dca.confidence
+forbidden_modules =
+    dca.db
+    dca.adapters
+    dca.api
+    httpx
+    sqlalchemy
+    psycopg
+    dca.llm
+    dca.workflow
+    dca.scheduler
+    dca.audit
+    dca.approvals
+    dca.agents
+    dca.metrics
+allow_indirect_imports = True
+
+[importlinter:contract:sdk-only-in-providers]
+name = only dca.llm.providers imports LLM SDKs
+type = forbidden
+source_modules =
+    dca
+forbidden_modules =
+    anthropic
+    google
+    openai
+allow_indirect_imports = True
+ignore_imports =
+    dca.llm.providers.** -> anthropic
+    dca.llm.providers.** -> google
+    dca.llm.providers.** -> openai
+unmatched_ignore_imports_alerting = none
+
+[importlinter:contract:http-only-boundaries]
+name = vault, mocks and core are mutually isolated
+type = forbidden
+source_modules =
+    dca
+forbidden_modules =
+    dca_vault
+    dca_mocks
+allow_indirect_imports = True
+
+[importlinter:contract:vault-mocks-no-core]
+name = vault and mocks never import core
+type = forbidden
+source_modules =
+    dca_vault
+    dca_mocks
+forbidden_modules =
+    dca
+allow_indirect_imports = True

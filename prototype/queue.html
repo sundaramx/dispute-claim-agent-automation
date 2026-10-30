@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Case queue · Dispute Console</title><link rel="stylesheet" href="styles.css?v=6"><script src="app.js?v=6" defer></script></head>
+<body data-page="queue" data-crumbs="Cases">
+<main>
+<div class="page-h">
+  <div><h1>Case queue</h1><p class="sub">1,284 open cases · nearest deadline first · countdowns use business days for Reg E and calendar days for Reg Z and network clocks</p></div>
+  <div class="actions"><a class="btn sec" href="dashboard.html">SLA dashboard</a><a class="btn" href="intake.html" data-roles="analyst supervisor">+ New dispute</a></div>
+</div>
+
+<div class="grid g4" style="margin-bottom:16px">
+  <div class="card stat"><div class="lbl"><span class="pill warn plain">At risk</span></div><div class="val">14</div><div class="small muted">Clocks at T-2 business days or less</div></div>
+  <div class="card stat"><div class="lbl"><span class="pill bad plain">Breached</span></div><div class="val">0</div><div class="small muted">Zero missed deadlines in 30 days</div></div>
+  <div class="card stat"><div class="lbl"><span class="pill brand plain">Awaiting approval</span></div><div class="val">37</div><div class="small muted">5 of them you can approve</div></div>
+  <div class="card stat"><div class="lbl"><span class="pill auto plain">New via chat today</span></div><div class="val">18</div><div class="small muted">3 handed off to a person</div></div>
+</div>
+
+<div class="card flush">
+  <div class="tabs" role="tablist" id="queue-tabs" aria-label="Saved views">
+    <button role="tab" aria-selected="true" data-tab="all">All open<span class="c" data-count="all"></span></button>
+    <button role="tab" aria-selected="false" data-tab="risk">At risk<span class="c" data-count="risk"></span></button>
+    <button role="tab" aria-selected="false" data-tab="approval">Awaiting approval<span class="c" data-count="approval"></span></button>
+    <button role="tab" aria-selected="false" data-tab="mine">Assigned to me<span class="c" data-count="mine"></span></button>
+    <button role="tab" aria-selected="false" data-tab="unassigned">Unassigned<span class="c" data-count="unassigned"></span></button>
+  </div>
+  <div class="toolbar">
+    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><label class="sr-only" for="q">Filter cases</label><input id="q" placeholder="Filter by case, category, assignee or status"></div>
+    <label class="sr-only" for="f-regime">Regime</label><select id="f-regime" style="width:auto"><option value="">All regimes</option><option>Reg E</option><option>Reg Z</option></select>
+    <label class="sr-only" for="f-net">Network</label><select id="f-net" style="width:auto"><option value="">All networks</option><option>Visa</option><option>Mastercard</option></select>
+    <label class="sr-only" for="f-cat">Category</label><select id="f-cat" style="width:auto"><option value="">All categories</option><option>Fraud</option><option>Non-receipt</option><option>Not as described</option><option>Duplicate</option><option>Credit not processed</option></select>
+    <button class="btn ghost sm" id="f-reset" type="button">Clear</button>
+  </div>
+  <div class="table-wrap"><table class="tbl hover">
+    <thead><tr><th>Case</th><th>Regime</th><th>Category</th><th class="num">Amount</th><th>Nearest deadline</th><th>Status</th><th>Assignee</th></tr></thead>
+    <tbody id="queue-body"></tbody>
+  </table></div>
+  <div class="toolbar" style="border-top:1px solid var(--line);border-bottom:0"><span class="note" id="queue-summary"></span><span class="note" style="margin-left:auto"><span class="kbd">j</span> <span class="kbd">k</span> move · <span class="kbd">↵</span> open · every row opens the DSP-2026-000412 example</span></div>
+</div>
+</main>
+</body></html>

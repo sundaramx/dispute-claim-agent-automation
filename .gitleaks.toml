@@ -1,0 +1,36 @@
+title = "dca gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Non-project dirs and handled by worktree config"
+paths = [
+  '''\.tools/.*''',
+  '''\.venv/.*''',
+  '''node_modules/.*''',
+  # Generated, gitignored: never committed, but present in working-tree scans.
+  '''(^|/)__pycache__/''',
+  '''(^|/)\.(pytest|mypy|ruff)_cache/''',
+  '''^console/dist/''',
+]
+
+[[rules]]
+id = "pan"
+description = "Payment card number (13-19 digits)"
+regex = '''\b\d(?:[ -]?\d){12,18}\b'''
+
+[rules.allowlist]
+description = "Known test-range PANs under fixtures, corpus and the static prototype's demo text only (TD-61)"
+condition = "AND"
+paths = [
+  '''backend/tests/fixtures/''',
+  '''console/src/test/fixtures/''',
+  '''eval/corpus/''',
+  '''prototype/''',
+]
+regexes = [
+  '''4111[ -]?1111[ -]?1111[ -]?1111''',
+  '''5555[ -]?5555[ -]?5555[ -]?4444''',
+  '''3782[ -]?822463[ -]?10005''',
+]

@@ -1,0 +1,24 @@
+.env
+.env.*
+!.env.example
+.venv/
+node_modules/
+.tools/
+.terraform/
+*.tfstate
+*.tfstate.*
+coverage/
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+__pycache__/
+
+# OS, caches, build output, local tool state
+.DS_Store
+.mypy_cache/
+.ruff_cache/
+dist/
+console/test-results/
+console/playwright-report/
+.optimus/

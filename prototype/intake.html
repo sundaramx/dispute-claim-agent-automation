@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>New dispute · Dispute Console</title><link rel="stylesheet" href="styles.css?v=6"><script src="app.js?v=6" defer></script></head>
+<body data-page="intake" data-crumbs="Cases>queue.html|New dispute">
+<main>
+<div class="page-h">
+  <div><h1>New dispute</h1><p class="sub">Same fields as <code>POST /api/v1/disputes</code>. The card number goes to the vault before anything is stored; only the last 4 digits stay.</p></div>
+</div>
+
+<div class="grid g-main">
+<form class="card" id="intake-form" novalidate>
+  <div class="card-h"><h2>Dispute details</h2><span class="right note">Try 4111 1111 1111 1111, or an Amex number starting 37</span></div>
+  <div class="card-b grid g2" style="gap:14px">
+    <div class="field"><label for="pan">Card number</label><input id="pan" inputmode="numeric" autocomplete="off" placeholder="•••• •••• •••• ••••" aria-describedby="pan-err"><div class="err" id="pan-err" hidden></div></div>
+    <div class="field"><label for="product">Card type</label><select id="product"><option value="debit">Debit (Reg E)</option><option value="credit">Credit (Reg Z)</option></select></div>
+    <div class="field"><label for="merchant">Merchant</label><input id="merchant" placeholder="As it appears on the statement"></div>
+    <div class="field"><label for="amt">Amount (USD)</label><input id="amt" type="number" step="0.01" placeholder="0.00" aria-describedby="amt-err"><div class="err" id="amt-err" hidden>Enter an amount greater than $0.00.</div></div>
+    <div class="field"><label for="txd">Transaction date</label><input id="txd" type="date" value="2026-10-24"></div>
+    <div class="field"><label for="learned">Cardholder noticed it on</label><input id="learned" type="date" value="2026-10-27"></div>
+    <div class="field"><label for="cat">What the cardholder says happened</label><select id="cat"><option>Didn’t make or authorize it (fraud)</option><option>Paid but never received it</option><option>Not as described</option><option>Charged more than once</option><option>Returned or cancelled, no refund</option></select></div>
+    <div class="field"><label for="notice">Notice received (starts the clocks)</label><input id="notice" value="Wed Oct 28, 2026 · 09:30 ET"><div class="hint">After 17:00 ET or on a non-business day it counts from the next business day.</div></div>
+    <div class="field" style="grid-column:1/-1"><label for="narr">Cardholder’s words (optional)</label><textarea id="narr" placeholder="The agent extracts structured fields from this. Treated as untrusted text."></textarea></div>
+  </div>
+  <div class="card-b btn-row" style="border-top:1px solid var(--line)"><button class="btn lg" id="submit" type="submit" disabled>Create dispute</button><a class="btn ghost" href="queue.html">Cancel</a><span class="note">Sent with an Idempotency-Key, so a double click can’t create two cases.</span></div>
+</form>
+
+<aside>
+  <div class="card">
+    <div class="card-h"><h2>What will happen</h2><span class="right note">live preview</span></div>
+    <div class="card-b"><div class="summary" id="preview-body"></div>
+      <p class="note" style="margin-top:10px">Then the agents take over: extract, triage, gather evidence and draft. Every credit, filing and letter comes back to a person for approval.</p></div>
+  </div>
+  <div class="callout info">ACH, Zelle, wire and check disputes, and Amex or Discover cards, are out of scope and rejected with a reason.</div>
+</aside>
+</div>
+</main>
+</body></html>

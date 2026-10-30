@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSP-2026-000412 · Dispute Console</title><link rel="stylesheet" href="styles.css?v=6"><script src="app.js?v=6" defer></script></head>
+<body data-page="case" data-crumbs="Cases>queue.html|DSP-2026-000412">
+<main>
+
+<section class="card case-head">
+  <div class="title"><h1>DSP-2026-000412</h1><span class="pill brand">awaiting approval</span><span class="tag">Reg E</span><span class="tag">Visa 10.4</span><span class="tag">Fraud</span><span class="pill warn">Supervisor required · over $500</span></div>
+  <div class="facts">
+    <div><span>Amount</span><b class="tnum">$842.17</b></div>
+    <div><span>Card</span><b>Debit •••• 4417</b></div>
+    <div><span>Notice received</span><b>Tue Oct 20 · 10:14 ET</b></div>
+    <div><span>Channel</span><b>REST API</b></div>
+    <div><span>Confidence</span><b>0.93 <span class="pill ok plain" style="font-size:11px">high</span></b></div>
+    <div><span>Assignee</span><b>supervisor1</b></div>
+  </div>
+  <div class="clockline-wrap"><div class="clockline" aria-label="Deadlines on this case">
+    <div class="axis"></div>
+    <div class="now" style="left:14.3%"></div>
+    <div class="mk" style="left:25%;color:var(--warn)"><i></i><b>Tue Nov 3</b><span>Investigate or credit · 4 BD</span></div>
+    <div class="mk" style="left:80.4%;color:var(--mute)"><i></i><b>Fri Dec 4</b><span>45-day extension, if credited</span></div>
+    <div class="mk" style="left:96%;color:var(--info)"><i></i><b>Tue Dec 15</b><span>Visa filing window</span></div>
+  </div></div>
+  <div class="action-bar" id="action-bar" aria-live="polite"></div>
+</section>
+
+<div class="grid g-main">
+<div>
+  <div class="card flush">
+    <div class="tabs" role="tablist" id="case-tabs" aria-label="Case sections">
+      <button role="tab" aria-selected="true" data-tab="overview">Overview</button>
+      <button role="tab" aria-selected="false" data-tab="evidence">Evidence<span class="c">5 / 6</span></button>
+      <button role="tab" aria-selected="false" data-tab="drafts">Drafts<span class="c">4</span></button>
+      <button role="tab" aria-selected="false" data-tab="timeline">Timeline</button>
+    </div>
+
+    <section data-panel="overview" class="card-b">
+      <div class="grid g2">
+        <div id="claim">
+          <h3 style="margin-top:0">Claim</h3>
+          <dl class="kv">
+            <dt>Transaction</dt><dd>NORTHWAY ELECTRONICS #2291<br><span class="muted small">Sat Oct 17 · $842.17 · auth 4471-A · card-present</span> <span class="pill ok">matched</span></dd>
+            <dt>Cardholder says</dt><dd>“I did not make this purchase. I was at work. My card was in my wallet. I noticed it on the app on the 19th.”<br><span class="note">Untrusted text · PII redacted before any model call</span></dd>
+            <dt>Learned of error</dt><dd>Mon Oct 19</dd>
+          </dl>
+        </div>
+        <div id="trace">
+          <h3 style="margin-top:0">Policy decision <span class="pill ok plain">grant_provisional_credit</span></h3>
+          <ol class="small" style="margin:0;padding-left:18px;display:grid;gap:4px">
+            <li><code>RE-REG-01</code> debit product → Reg E</li>
+            <li><code>NET-01</code> BIN → Visa</li>
+            <li><code>CAT-FRAUD-02</code> fraud → 10.4 (table v7) · model agreed</li>
+            <li><code>RE-PC-001</code> minimum evidence present, clock open → grant provisional credit</li>
+          </ol>
+          <p class="note" style="margin-top:8px">Policy pack v2026.10.1 · config v14 · the model can’t change an outcome</p>
+        </div>
+      </div>
+      <h3 id="conf">Confidence 0.93 = 0.4 × rules + 0.4 × evidence + 0.2 × model</h3>
+      <div class="conf">
+        <div class="row"><span>Rule coverage</span><div class="meter ok"><i style="width:97%"></i></div><b class="tnum">0.97</b></div>
+        <div class="row"><span>Evidence complete</span><div class="meter ok"><i style="width:91%"></i></div><b class="tnum">0.91</b></div>
+        <div class="row"><span>Model self-score</span><div class="meter"><i style="width:88%"></i></div><b class="tnum">0.88</b></div>
+      </div>
+      <h3>Agent evidence summary</h3>
+      <p>The transaction was card-present at an online-electronics merchant profile that does not match prior use <button class="cite" data-ref="ev-E-2">E-2</button>. The cardholder reported it two days after posting <button class="cite" data-ref="ev-E-4">E-4</button>. There are no prior disputes on the account <button class="cite" data-ref="ev-E-3">E-3</button>. An affidavit is still outstanding <button class="cite" data-ref="ev-E-5">E-5</button>.</p>
+    </section>
+
+    <section data-panel="evidence" hidden>
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>Item</th><th>Source</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr id="ev-E-1"><td class="mono">E-1</td><td>Authorization and capture details</td><td>Card processor</td><td><span class="pill ok">present</span></td></tr>
+          <tr id="ev-E-2"><td class="mono">E-2</td><td>Card-present indicator and device data</td><td>Card processor</td><td><span class="pill ok">present</span></td></tr>
+          <tr id="ev-E-3"><td class="mono">E-3</td><td>Prior disputes on the account</td><td>Core ledger</td><td><span class="pill ok">present · none</span></td></tr>
+          <tr id="ev-E-4"><td class="mono">E-4</td><td>Customer contact history</td><td>CRM</td><td><span class="pill ok">present</span></td></tr>
+          <tr id="ev-E-5"><td class="mono">E-5</td><td>Signed affidavit of unauthorized use</td><td>Customer</td><td><span class="pill warn">missing · request drafted</span></td></tr>
+          <tr id="ev-E-6"><td class="mono">E-6</td><td>Merchant credit record</td><td>—</td><td><span class="pill plain">not applicable</span></td></tr>
+        </tbody>
+      </table>
+      <p class="note card-b" style="margin:0">Each item is stored by content hash. The summary can only cite these IDs; uncited sentences fail validation (FR-7 AC 4).</p>
+    </section>
+
+    <section data-panel="drafts" class="card-b" hidden>
+      <div class="seg" role="tablist" id="draft-seg" aria-label="Drafts" style="margin-bottom:14px">
+        <button role="tab" aria-selected="true" data-d="pc">PC notice v1</button>
+        <button role="tab" aria-selected="false" data-d="info">Info request v1</button>
+        <button role="tab" aria-selected="false" data-d="memo">Decision memo v1</button>
+        <button role="tab" aria-selected="false" data-d="filing">Filing package v1</button>
+      </div>
+      <div data-draft="pc" id="draft-pc">
+        <div class="letter"><p><b>Re: Dispute DSP-2026-000412 — provisional credit</b></p><p>Dear [NAME_1],</p><p>We have credited $842.17 to your account on a provisional basis while we investigate the transaction of 10/17/2026 at NORTHWAY ELECTRONICS. We will complete our investigation within 45 days of your notice dated 10/20/2026. …</p></div>
+        <div class="checks" id="draft-checks"><span class="pill ok">Reg E disclosures present</span><span class="pill ok">Amounts and dates match the case</span><span class="pill ok">No card number or extra PII</span><span class="pill plain">Name filled in at send time</span></div>
+        <p class="note" style="margin-top:8px">Template pc_notice.v3 · prompt drafting.v2 · model mock-1 · prepared by svc:decide</p>
+      </div>
+      <div data-draft="info" id="draft-info" hidden>
+        <div class="letter"><p><b>We need one more thing to finish your dispute</b></p><p>Dear [NAME_1], to complete our review of DSP-2026-000412, please sign and return the enclosed statement that you did not authorize the purchase of $842.17 at NORTHWAY ELECTRONICS on 10/17/2026. …</p></div>
+        <p class="note" style="margin-top:8px">Waiting for approval as proposal P-2b · customer communications always need a human</p>
+      </div>
+      <div data-draft="memo" hidden><div class="letter"><p><b>Decision memo</b></p><p>Outcome grant_provisional_credit under RE-PC-001. Evidence E-1 to E-4 present, E-5 outstanding. Investigate-or-credit clock due 11/03/2026. …</p></div></div>
+      <div data-draft="filing" hidden><div class="letter"><p><b>Visa filing package · reason code 10.4</b></p><p>Cardholder letter pending (E-5). Transaction 4471-A, card-present, device mismatch per E-2. Package validated against the 10.4 schema: 1 field waiting for E-5. …</p></div></div>
+      <div class="btn-row" style="margin-top:14px" data-roles="analyst supervisor"><button class="btn sec" id="edit-draft" type="button">Edit draft</button><span class="note">Editing makes you the preparer, so someone else must approve.</span></div>
+    </section>
+
+    <section data-panel="timeline" class="card-b" hidden>
+      <ul class="timeline" id="timeline-list">
+        <li><span class="dot"></span><div>intake.received · REST API<small>Tue Oct 20 10:14 · svc:api</small></div></li>
+        <li><span class="dot ai"></span><div>claim.extracted · extraction.v1<small>Tue Oct 20 10:15 · svc:intake</small></div></li>
+        <li><span class="dot"></span><div>triage.completed · 3 clocks created<small>Tue Oct 20 10:16 · svc:triage</small></div></li>
+        <li><span class="dot"></span><div>evidence.collected · 5 items<small>Wed Oct 21 08:02 · svc:investigate</small></div></li>
+        <li><span class="dot ai"></span><div>decision.made · confidence 0.93<small>Wed Oct 21 08:05 · svc:decide</small></div></li>
+        <li><span class="dot"></span><div>proposal.created ×3 · preparer svc:decide<small>Wed Oct 21 08:05</small></div></li>
+        <li><span class="dot sec"></span><div>security.four_eyes_violation · analyst2 tried to approve their own edit (403)<small>Thu Oct 22 15:48</small></div></li>
+        <li><span class="dot ai"></span><div>conversation.turn ×4 · copilot · supervisor1<small>Today 09:21</small></div></li>
+        <li><span class="dot future"></span><div>Scheduled: T-2 business-day alert if still unapproved<small>Fri Oct 30</small></div></li>
+      </ul>
+      <a href="audit.html">Open in the audit trail →</a>
+    </section>
+  </div>
+</div>
+
+<aside>
+  <div class="card">
+    <div class="card-h"><h2>Proposals</h2><span class="right note">bound to content hashes</span></div>
+    <table class="tbl"><tbody>
+      <tr id="prop-P-1"><td><b>Provisional credit</b><span class="sub">P-1 · $842.17 · Supervisor</span></td><td style="text-align:right"><span class="pill brand">pending</span></td></tr>
+      <tr id="prop-P-2"><td><b>PC notice letter</b><span class="sub">P-2 · after the credit posts</span></td><td style="text-align:right"><span class="pill plain">pending</span></td></tr>
+      <tr id="prop-P-3"><td><b>Chargeback to Visa</b><span class="sub">P-3 · $842.17 · 10.4</span></td><td style="text-align:right"><span class="pill plain">pending</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="card">
+    <div class="card-h"><h2>Clocks</h2><span class="right note">params rp-2026.1</span></div>
+    <table class="tbl"><tbody>
+      <tr id="clk-pc"><td><b>Investigate or credit</b><span class="sub">10 business days</span></td><td><div class="due"><div class="lbl"><b>Nov 3</b><span class="muted">4 BD</span></div><div class="meter warn"><i style="width:60%"></i></div></div></td></tr>
+      <tr id="clk-ext"><td><b>Extended investigation</b><span class="sub">45 days, if credited in time</span></td><td><span class="pill plain">not started</span></td></tr>
+      <tr id="clk-visa"><td><b>Visa filing window</b><span class="sub">10.4</span></td><td><div class="due"><div class="lbl"><b>Dec 15</b><span class="muted">48 d</span></div><div class="meter"><i style="width:14%"></i></div></div></td></tr>
+      <tr><td><b>Results notice</b><span class="sub">3 BD after conclusion</span></td><td><span class="pill plain">not started</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="card card-b" data-roles="analyst supervisor">
+    <label for="note">Add a note</label><textarea id="note" style="min-height:64px" placeholder="Visible to everyone on this case"></textarea>
+    <div class="btn-row" style="margin-top:8px"><button class="btn sec sm" type="button">Add note</button><button class="btn ghost sm" type="button">Reassign</button></div>
+  </div>
+</aside>
+</div>
+
+<button class="fab" id="copilot-fab" type="button" aria-controls="copilot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>Ask copilot <span class="kbd" style="color:#fff;border-color:rgba(255,255,255,.5);background:transparent">c</span></button>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="copilot" aria-label="Case copilot" aria-hidden="true">
+  <div class="drawer-h"><span class="ai-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span><div><b>Case copilot</b><span>Answers only from DSP-2026-000412, with citations</span></div><button class="icon-btn" id="copilot-close" type="button" aria-label="Close copilot" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="drawer-b" id="copilot-log" role="log" aria-live="polite">
+    <div class="msg sys">Click a citation to jump to the record it points at. The copilot can’t approve, change outcomes or contact the customer.</div>
+  </div>
+  <div class="drawer-f">
+    <div class="suggest" id="copilot-suggest"><button type="button">Summarize this case</button><button type="button">Why does this need a Supervisor?</button><button type="button">What’s missing before we file the chargeback?</button><button type="button">Which clock is nearest?</button></div>
+    <form class="composer" id="copilot-form"><label class="sr-only" for="copilot-in">Ask about this case</label><textarea id="copilot-in" rows="1" placeholder="Ask about this case…"></textarea><button class="btn" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="width:16px;height:16px" aria-hidden="true"><path d="M5 12l14-7-5 15-2.5-6.5z"/></svg></button></form>
+    <span class="note">copilot_answer.v1 · mock-1 · turns are audit-logged</span>
+  </div>
+</aside>
+</main>
+</body></html>

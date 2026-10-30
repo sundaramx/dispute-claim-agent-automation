@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SLA dashboard · Dispute Console</title><link rel="stylesheet" href="styles.css?v=6"><script src="app.js?v=6" defer></script></head>
+<body data-page="dashboard" data-crumbs="SLA dashboard">
+<main>
+<div class="page-h">
+  <div><h1>SLA dashboard</h1><p class="sub">Snapshot Wed Oct 28, 2026 · 09:30 ET · refreshed every 60 s</p></div>
+  <div class="actions"><div class="seg" role="tablist" aria-label="Range"><button role="tab" aria-selected="false">7 d</button><button role="tab" aria-selected="true">30 d</button><button role="tab" aria-selected="false">All time</button></div><button class="btn sec" type="button">Export CSV</button></div>
+</div>
+
+<div class="grid g4">
+  <div class="card stat"><div class="lbl">Deadline compliance · SM-1</div><div class="val">100%</div><div class="delta up">0 of 2,911 closed clocks late</div><svg class="spark" data-points="100,100,100,100,100,100,100,100,100,100" data-color="var(--ok)"></svg></div>
+  <div class="card stat"><div class="lbl">Handling time saved · SM-2 <span class="pill warn plain" title="Baseline not validated (OQ-2)">baseline unvalidated</span></div><div class="val">57%</div><div class="delta up">▲ 6 pts vs last month</div><svg class="spark" data-points="38,41,44,46,47,49,51,53,55,57"></svg></div>
+  <div class="card stat"><div class="lbl">QA agreement on auto-actions</div><div class="val">94%</div><div class="delta">29 of 31 reviewed</div><svg class="spark" data-points="90,92,91,95,93,94,96,94,93,94" data-color="var(--auto)"></svg></div>
+  <div class="card stat"><div class="lbl">Open clocks at risk</div><div class="val">14</div><div class="delta down">▲ 3 since yesterday</div><svg class="spark" data-points="8,9,7,10,11,9,12,11,11,14" data-color="var(--warn)"></svg></div>
+</div>
+
+<div class="grid g2">
+  <div class="card flush">
+    <div class="card-h"><h2>Open clocks by state</h2><span class="right legend"><span><i style="background:var(--warn-soft);border:1px solid var(--warn)"></i>at risk</span></span></div>
+    <table class="tbl heat"><thead><tr><th>Regime · clock</th><th class="num">Open</th><th class="num">At risk</th><th class="num">Breached</th></tr></thead><tbody>
+      <tr><td>Reg E · investigate or credit</td><td class="num">212</td><td class="num h1">6</td><td class="num h0">0</td></tr>
+      <tr><td>Reg E · notices</td><td class="num">148</td><td class="num h1">3</td><td class="num h0">0</td></tr>
+      <tr><td>Reg Z · acknowledgment</td><td class="num">96</td><td class="num h1">1</td><td class="num h0">0</td></tr>
+      <tr><td>Reg Z · resolution</td><td class="num">301</td><td class="num h0">0</td><td class="num h0">0</td></tr>
+      <tr><td>Network · filing and response</td><td class="num">517</td><td class="num h1">4</td><td class="num h0">0</td></tr>
+    </tbody></table>
+  </div>
+  <div class="card flush">
+    <div class="card-h"><h2>Due within 2 business days</h2><a class="right btn sm ghost" href="queue.html">Open queue →</a></div>
+    <table class="tbl hover"><thead><tr><th>Case</th><th>Clock</th><th>Next action</th></tr></thead><tbody>
+      <tr><td><a class="case-link" href="case.html">DSP-2026-000398</a><span class="sub">Thu Oct 29</span></td><td>Reg E credit</td><td>Approve provisional credit</td></tr>
+      <tr><td><a class="case-link" href="case.html">DSP-2026-000366</a><span class="sub">Fri Oct 30</span></td><td>Reg Z acknowledgment</td><td>Approve the acknowledgment letter</td></tr>
+      <tr><td><a class="case-link" href="case.html">DSP-2026-000401</a><span class="sub">Fri Oct 30</span></td><td>Reg E credit</td><td>Complete the claim manually</td></tr>
+      <tr><td><a class="case-link" href="case.html">DSP-2026-000355</a><span class="sub">Mon Nov 2</span></td><td>Mastercard window</td><td>Supervisor: approve the filing</td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<div class="grid g2">
+  <div class="card">
+    <div class="card-h"><h2>Handling time per case</h2><span class="right legend"><span><i style="background:var(--brand)"></i>now</span><span><i style="background:var(--ink-2)"></i>baseline</span></span></div>
+    <div class="card-b">
+      <div class="hbar"><span>Fraud</span><div class="track"><i style="width:34%"></i><b style="left:84%"></b></div><span class="tnum muted">17 vs 42 min</span></div>
+      <div class="hbar"><span>Non-receipt</span><div class="track"><i style="width:36%"></i><b style="left:76%"></b></div><span class="tnum muted">18 vs 38 min</span></div>
+      <div class="hbar"><span>Not as described</span><div class="track"><i style="width:44%"></i><b style="left:90%"></b></div><span class="tnum muted">22 vs 45 min</span></div>
+      <div class="hbar"><span>Duplicate</span><div class="track"><i style="width:28%"></i><b style="left:50%"></b></div><span class="tnum muted">14 vs 25 min</span></div>
+      <div class="hbar"><span>Credit not processed</span><div class="track"><i style="width:30%"></i><b style="left:62%"></b></div><span class="tnum muted">15 vs 31 min</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h2>Agent conversations · today</h2><span class="right pill auto plain">CR-1</span></div>
+    <div class="card-b grid g2" style="gap:12px">
+      <div><div class="lbl small muted">Cardholder chats</div><div class="stat" style="padding:0"><div class="val">24</div></div>
+        <div class="small">18 submitted · 3 handed off · 2 status only · <b>1 abandoned after notice</b> → manual completion</div></div>
+      <div><div class="lbl small muted">Copilot questions</div><div class="stat" style="padding:0"><div class="val">126</div></div>
+        <div class="small">2 refused for lack of citations · 31 suggestions clicked · 0 injection attempts succeeded</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card flush">
+  <div class="card-h"><h2>LLM usage · last 24 h</h2><span class="right note">mock provider on this stack, so cost is $0.00</span></div>
+  <div class="table-wrap"><table class="tbl"><thead><tr><th>Task</th><th>Provider</th><th class="num">Calls</th><th class="num">Tokens</th><th class="num">p95 latency</th><th class="num">Cost</th></tr></thead><tbody>
+    <tr><td>extraction</td><td>mock</td><td class="num">182</td><td class="num">241k</td><td class="num">12 ms</td><td class="num">$0.00</td></tr>
+    <tr><td>evidence_summary</td><td>mock</td><td class="num">164</td><td class="num">388k</td><td class="num">15 ms</td><td class="num">$0.00</td></tr>
+    <tr><td>drafting</td><td>mock</td><td class="num">203</td><td class="num">512k</td><td class="num">18 ms</td><td class="num">$0.00</td></tr>
+    <tr><td>copilot_answer <span class="pill auto plain">CR-1</span></td><td>mock</td><td class="num">131</td><td class="num">402k</td><td class="num">21 ms</td><td class="num">$0.00</td></tr>
+    <tr><td>chat_understand <span class="pill auto plain">CR-1</span></td><td>mock</td><td class="num">214</td><td class="num">96k</td><td class="num">9 ms</td><td class="num">$0.00</td></tr>
+  </tbody></table></div>
+</div>
+</main>
+</body></html>

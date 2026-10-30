@@ -1,0 +1,16 @@
+services:
+  postgres-test:
+    image: postgres:16@sha256:1beaa3084eee2676f20a9cd9928f0bf2c5bf674f8e49f81017912183d377c61c
+    environment:
+      POSTGRES_USER: dca
+      POSTGRES_PASSWORD: dca-test-only
+      POSTGRES_DB: postgres
+    ports:
+      - "127.0.0.1:55432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dca -d postgres"]
+      interval: 1s
+      timeout: 3s
+      retries: 30

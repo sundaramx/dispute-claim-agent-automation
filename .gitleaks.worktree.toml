@@ -1,0 +1,8 @@
+[extend]
+path = ".gitleaks.toml"
+
+[allowlist]
+description = "Working-tree scan only: gitignored local .env only"
+paths = [
+     '''^\.env$''',
+]

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Configuration · Dispute Console</title><link rel="stylesheet" href="styles.css?v=6"><script src="app.js?v=6" defer></script></head>
+<body data-page="admin" data-crumbs="Governance|Configuration">
+<main>
+<div class="page-h">
+  <div><h1>Configuration</h1><p class="sub">Config v14 is active. Every change is versioned, needs a reason and is audit-logged with a diff. Admins can’t approve case actions (D-3).</p></div>
+</div>
+
+<div class="grid g2">
+  <div class="card">
+    <div class="card-h"><h2>Low-risk auto-approve</h2><span class="right" id="auto-state"></span></div>
+    <div class="card-b">
+      <label class="switch"><input type="checkbox" id="auto-toggle" role="switch"><span class="track"></span><span>Execute eligible actions without a human</span></label>
+      <div class="summary" style="margin-top:14px">
+        <div><span>Eligible actions</span><b>Provisional credit, chargeback filing</b></div>
+        <div><span>Confidence</span><b>≥ 0.90</b></div>
+        <div><span>Amount</span><b>≤ $100</b></div>
+        <div><span>QA sample</span><b>10% to Supervisors</b></div>
+        <div><span>Never automatic</span><b>Letters, denials, write-offs, representment</b></div>
+      </div>
+      <p class="note" style="margin-top:10px">OFF on every fresh deploy. Turning it OFF stops new auto-actions within 5 seconds.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2>Thresholds</h2><span class="right note">validated before save</span></div>
+    <div class="card-b grid g2" style="gap:12px">
+      <div class="field"><label for="t-sup">Supervisor sign-off over (USD)</label><input id="t-sup" data-key="approvals.supervisor_threshold" type="number" value="500"></div>
+      <div class="field"><label for="t-auto">Auto-approve up to (USD)</label><input id="t-auto" data-key="auto_approve.threshold" type="number" value="100" aria-describedby="t-auto-err"><div class="err" id="t-auto-err" hidden></div></div>
+      <div class="field"><label for="t-low">Low confidence below</label><input id="t-low" data-key="confidence.low" type="number" step="0.01" value="0.80"></div>
+      <div class="field"><label for="t-high">High confidence at or above</label><input id="t-high" data-key="confidence.high" type="number" step="0.01" value="0.90" aria-describedby="t-high-err"><div class="err" id="t-high-err" hidden></div></div>
+      <div class="field"><label for="t-qa">QA sample rate (%)</label><input id="t-qa" data-key="qa.sample_rate" type="number" value="10"></div>
+      <div class="field" style="align-self:end"><button class="btn" id="save-cfg" type="button" disabled>Save as v15…</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="grid g2">
+  <div class="card flush">
+    <div class="card-h"><h2>LLM routing</h2><span class="right note">per environment and task, with failover</span></div>
+    <table class="tbl"><thead><tr><th>Task</th><th>Primary</th><th>Failover</th><th>Region</th></tr></thead><tbody>
+      <tr><td>extraction</td><td>mock</td><td>ollama</td><td>local</td></tr>
+      <tr><td>classification</td><td>mock</td><td>ollama</td><td>local</td></tr>
+      <tr><td>evidence_summary</td><td>mock</td><td>ollama</td><td>local</td></tr>
+      <tr><td>drafting</td><td>mock</td><td>ollama</td><td>local</td></tr>
+      <tr><td>copilot_answer <span class="pill auto plain">CR-1</span></td><td>mock</td><td>ollama</td><td>local</td></tr>
+      <tr><td>chat_understand <span class="pill auto plain">CR-1</span></td><td>mock</td><td>ollama</td><td>local</td></tr>
+    </tbody></table>
+    <p class="note card-b" style="margin:0">Bedrock needs a full inference-profile ARN and guardrail from config. Outside local, every provider must declare a US region.</p>
+  </div>
+  <div class="card">
+    <div class="card-h"><h2>Kill switches</h2><span class="right note">take effect at the next tick</span></div>
+    <div class="card-b" style="display:grid;gap:14px">
+      <label class="switch"><input type="checkbox" checked data-kill="agent pipeline"><span class="track"></span><span>Agent pipeline running</span></label>
+      <label class="switch"><input type="checkbox" checked data-kill="effects executor"><span class="track"></span><span>Effects executor (ledger, network, letters)</span></label>
+      <label class="switch"><input type="checkbox" checked data-kill="case copilot"><span class="track"></span><span>Case copilot <span class="pill auto plain">CR-1</span></span></label>
+      <label class="switch"><input type="checkbox" checked data-kill="cardholder chat"><span class="track"></span><span>Cardholder chat <span class="pill auto plain">CR-1</span></span></label>
+    </div>
+  </div>
+</div>
+
+<div class="grid g2">
+  <div class="card">
+    <div class="card-h"><h2>Chat reply library</h2><span class="right pill ok">replies.v1 · approved</span></div>
+    <div class="card-b">
+      <div class="summary"><div><span>Templates</span><b>24</b></div><div><span>Approved by</span><b>compliance1 · Tue Oct 27</b></div><div><span>Content hash</span><b class="mono">sha256:3fa0…91cc</b></div></div>
+      <p class="note" style="margin-top:10px">The chat assistant can only send these sentences, filled with validated values. A new version needs Compliance approval before it can be activated (D-11, OQ-9).</p>
+      <div class="btn-row"><button class="btn sec sm" type="button">Preview templates</button><button class="btn ghost sm" type="button">Upload v2 for approval…</button></div>
+    </div>
+  </div>
+  <div class="card flush">
+    <div class="card-h"><h2>Users and roles</h2><span class="right note">Admin and Auditor can’t hold other roles</span></div>
+    <table class="tbl"><tbody>
+      <tr><td><b>analyst1</b>, <b>analyst2</b></td><td>Analyst</td><td><span class="pill ok">active</span></td></tr>
+      <tr><td><b>supervisor1</b>, <b>supervisor2</b></td><td>Supervisor</td><td><span class="pill ok">active</span></td></tr>
+      <tr><td><b>auditor1</b></td><td>Compliance Auditor</td><td><span class="pill ok">active</span></td></tr>
+      <tr><td><b>admin1</b></td><td>Admin</td><td><span class="pill ok">active</span></td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<div class="card flush">
+  <div class="card-h"><h2>Version history</h2></div>
+  <table class="tbl"><thead><tr><th>Version</th><th>By</th><th>Change</th><th>Reason</th></tr></thead><tbody id="cfg-history">
+    <tr><td>14</td><td>admin1</td><td class="mono">auto_approve.enabled true → false</td><td>Pilot window ended</td></tr>
+    <tr><td>13</td><td>admin1</td><td class="mono">auto_approve.enabled false → true</td><td>Pilot window approved by Compliance</td></tr>
+    <tr><td>12</td><td>admin1</td><td class="mono">qa.sample_rate 5% → 10%</td><td>Raise QA coverage</td></tr>
+  </tbody></table>
+</div>
+</main>
+</body></html>

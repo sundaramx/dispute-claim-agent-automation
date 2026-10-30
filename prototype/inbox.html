@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Approvals · Dispute Console</title><link rel="stylesheet" href="styles.css?v=6"><script src="app.js?v=6" defer></script></head>
+<body data-page="inbox" data-crumbs="Approvals">
+<main>
+<div class="page-h">
+  <div><h1>Approvals</h1><p class="sub">Only what <b data-me></b> may decide · four-eyes and role rules applied · nearest deadline first</p></div>
+  <div class="actions"><span class="note"><span class="kbd">j</span> <span class="kbd">k</span> move · <span class="kbd">a</span> approve · <span class="kbd">e</span> return · <span class="kbd">r</span> reject</span></div>
+</div>
+
+<div class="seg" role="tablist" id="inbox-tabs" aria-label="Queues" style="margin-bottom:16px">
+  <button role="tab" aria-selected="true" data-target="tab-pending">Pending <span id="pending-count"></span></button>
+  <button role="tab" aria-selected="false" data-target="tab-qa" data-roles="supervisor">QA samples 2</button>
+  <button role="tab" aria-selected="false" data-target="tab-prearb" data-roles="supervisor">Manual pre-arb 1</button>
+  <button role="tab" aria-selected="false" data-target="tab-callbacks">Call-backs 2</button>
+</div>
+
+<section id="tab-pending" data-section>
+  <div class="split">
+    <div class="card flush"><div class="table-wrap"><table class="tbl hover">
+      <thead><tr><th>Proposal</th><th class="num">Amount</th><th>Deadline it satisfies</th><th>Who can approve</th></tr></thead>
+      <tbody id="inbox-body"></tbody>
+    </table></div></div>
+    <div class="card preview" id="preview" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="tab-qa" data-section hidden>
+  <div class="card flush">
+    <div class="card-h"><h2>QA sample of auto-approved actions</h2><span class="right note">10% sampled with a reproducible seed (FR-14)</span></div>
+    <table class="tbl"><thead><tr><th>Case</th><th>Auto-action</th><th class="num">Amount</th><th>Executed</th><th>Verdict</th></tr></thead><tbody>
+      <tr><td><b>DSP-2026-000288</b></td><td><span class="pill auto">auto-approved</span> Chargeback filing</td><td class="num">$74.10</td><td>Mon Oct 26 · 11:03</td><td class="verdict"><button class="btn sm sec" data-qa="agree">Agree</button> <button class="btn sm danger-sec" data-qa="disagree">Disagree…</button></td></tr>
+      <tr><td><b>DSP-2026-000291</b></td><td><span class="pill auto">auto-approved</span> Provisional credit</td><td class="num">$32.00</td><td>Mon Oct 26 · 14:22</td><td class="verdict"><button class="btn sm sec" data-qa="agree">Agree</button> <button class="btn sm danger-sec" data-qa="disagree">Disagree…</button></td></tr>
+    </tbody></table>
+    <p class="note card-b" style="margin:0">Auto-approve was ON for a pilot earlier this week; it is OFF now.</p>
+  </div>
+</section>
+
+<section id="tab-prearb" data-section hidden>
+  <div class="card flush">
+    <div class="card-h"><h2>Pre-arbitration and arbitration</h2><span class="right note">Agents stop here. Clocks and audit continue (FR-18).</span></div>
+    <table class="tbl"><thead><tr><th>Case</th><th>Why it’s here</th><th>Regulatory clock</th><th></th></tr></thead><tbody>
+      <tr><td><b>DSP-2026-000299</b></td><td>Merchant representment contested; next step is pre-arbitration</td><td><span class="pill info">open</span> Thu Nov 12</td><td><button class="btn sm sec">Add note</button> <button class="btn sm sec">Record outcome</button></td></tr>
+    </tbody></table>
+  </div>
+</section>
+
+<section id="tab-callbacks" data-section hidden>
+  <div class="card flush">
+    <div class="card-h"><h2>Call-backs requested in chat</h2><span class="right note">The chat assistant hands off; there is no live chat in the MVP (FR-37 AC 9)</span></div>
+    <table class="tbl"><thead><tr><th>Cardholder</th><th>Reason</th><th>Requested</th><th>Status</th></tr></thead><tbody>
+      <tr><td><b>cust:C-11410</b><span class="sub">no open case</span></td><td>Asked for a person</td><td>Today 08:52</td><td class="verdict"><button class="btn sm sec" data-callback>Mark called back</button></td></tr>
+      <tr><td><b>cust:C-10577</b><span class="sub">DSP-2026-000340</span></td><td>Two messages the assistant couldn’t understand</td><td>Today 09:04</td><td class="verdict"><button class="btn sm sec" data-callback>Mark called back</button></td></tr>
+    </tbody></table>
+  </div>
+</section>
+</main>
+</body></html>

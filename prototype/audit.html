@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Audit trail · Dispute Console</title><link rel="stylesheet" href="styles.css?v=6"><script src="app.js?v=6" defer></script></head>
+<body data-page="audit" data-crumbs="Governance|Audit trail">
+<main>
+<div class="page-h">
+  <div><h1>Audit trail</h1><p class="sub">Append-only and hash-chained. Each event’s hash covers the one before it, so any edit, deletion or reordering breaks the chain.</p></div>
+</div>
+
+<div class="card chainbar">
+  <button class="btn" id="verify" type="button">Verify chain</button>
+  <div class="progress" aria-hidden="true"><i id="vbar"></i></div>
+  <span id="vstatus" aria-live="polite"><span class="pill ok">Last verified 09:00 · seq 1 → 48,221 · intact</span></span>
+</div>
+
+<div class="card flush">
+  <div class="toolbar">
+    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><label class="sr-only" for="audit-q">Search events</label><input id="audit-q" value="" placeholder="Search case, actor or event type"></div>
+    <button class="chip" type="button" data-etype="approval" aria-pressed="false">approvals</button>
+    <button class="chip" type="button" data-etype="security" aria-pressed="false">security</button>
+    <button class="chip" type="button" data-etype="conversation" aria-pressed="false">conversations</button>
+    <button class="chip" type="button" data-etype="llm" aria-pressed="false">model calls</button>
+  </div>
+  <div class="table-wrap"><table class="tbl hover"><thead><tr><th class="num">Seq</th><th>Time (ET)</th><th>Actor</th><th>Event</th><th>Policy · config · model</th><th>Hash</th><th>Chain</th></tr></thead><tbody id="audit-body">
+    <tr data-seq="47,102" data-type="intake"><td class="num">47,102</td><td>Oct 20 10:14</td><td>svc:api</td><td class="mono">intake.received</td><td class="mono">— · c13 · —</td><td class="hash">a41f…09c2</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="47,103" data-type="llm"><td class="num">47,103</td><td>Oct 20 10:15</td><td>svc:intake</td><td class="mono">llm.call · extraction</td><td class="mono">— · c13 · mock-1@extraction.v1</td><td class="hash">7be0…d1a8</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="47,109" data-type="triage"><td class="num">47,109</td><td>Oct 20 10:16</td><td>svc:triage</td><td class="mono">triage.completed</td><td class="mono">table v7 · c13 · —</td><td class="hash">12cc…f330</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="47,388" data-type="decision"><td class="num">47,388</td><td>Oct 21 08:05</td><td>svc:decide</td><td class="mono">decision.made</td><td class="mono">2026.10.1 · c13 · mock-1</td><td class="hash">e9d5…7710</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="47,389" data-type="proposal"><td class="num">47,389</td><td>Oct 21 08:05</td><td>svc:decide</td><td class="mono">proposal.created</td><td class="mono">2026.10.1 · c13 · —</td><td class="hash">03aa…bb4e</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="47,911" data-type="security"><td class="num">47,911</td><td>Oct 22 15:48</td><td>analyst2</td><td class="mono">security.four_eyes_violation</td><td class="mono">— · c13 · —</td><td class="hash">5d70…c9e1</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="48,204" data-type="conversation"><td class="num">48,204</td><td>Oct 28 09:13</td><td>cust:C-10982</td><td class="mono">chat.notice_asserted</td><td class="mono">— · c14 · replies.v1</td><td class="hash">b2e8…4a17</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="48,209" data-type="conversation"><td class="num">48,209</td><td>Oct 28 09:15</td><td>cust:C-10982</td><td class="mono">chat.submitted</td><td class="mono">— · c14 · replies.v1</td><td class="hash">90fd…e6b3</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="48,215" data-type="conversation"><td class="num">48,215</td><td>Oct 28 09:21</td><td>supervisor1</td><td class="mono">conversation.turn · copilot</td><td class="mono">— · c14 · mock-1@copilot_answer.v1</td><td class="hash">c18a…0d5f</td><td><span class="chain-cell">ok</span></td></tr>
+    <tr data-seq="48,221" data-type="approval"><td class="num">48,221</td><td>Oct 28 09:24</td><td>analyst1</td><td class="mono">approval.approved</td><td class="mono">2026.10.1 · c14 · —</td><td class="hash">f3b7…8821</td><td><span class="chain-cell">ok</span></td></tr>
+  </tbody></table></div>
+  <p class="note card-b" style="margin:0">Click a row for its hash links. Payloads that contain PII are shown by digest only for Compliance Auditors.</p>
+</div>
+
+<div class="card">
+  <div class="card-h"><h2>Replay a decision</h2><span class="right note">Model outputs are replayed from the record, never regenerated</span></div>
+  <div class="card-b btn-row"><button class="btn sec" id="replay" type="button">Replay DSP-2026-000412</button><span id="replay-out" aria-live="polite"><span class="pill ok">Last replay: match · 0 diffs</span></span></div>
+</div>
+</main>
+</body></html>
