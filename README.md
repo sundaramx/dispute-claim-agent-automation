@@ -8,6 +8,10 @@ Agentic automation for issuer-side **card dispute operations** (debit Reg E, cre
 
 The Co-Pilot sits beside a case and helps the analyst investigate it. It never approves, denies, moves money or contacts the customer: those stay with people and policy.
 
+![The Investigation Co-Pilot in action: two questions run read-only lookups, a citation opens the new evidence, and the brief updates](docs/screenshots/copilot-investigation.gif)
+
+*In action on `qwen3.6:27b-mlx`: the analyst asks how the card was read and whether the merchant has other disputes. The model picks two read-only lookups, code runs them, and the answers cite the new evidence (E-7, E-8). Clicking E-7 opens it in the evidence table, and the brief is rewritten with the counterfeit-card conflict and new high risks.*
+
 ![Investigation brief written by the local model](docs/screenshots/02-copilot-brief.jpg)
 
 **Brief.** When a case opens, the Co-Pilot writes an investigation brief: a headline, findings, evidence gaps, conflicting facts, risks with a level, and an ordered plan with one-click next steps. Every item cites a case record (the cardholder's claim, evidence `E-n`, policy rule, clock, proposal or draft). Deterministic rule checks are merged in and tagged `rule` when the model hasn't already covered them, so the brief doesn't depend on the model noticing them: above, the rule check flags that the purchase was card-present while the cardholder says the card never left their wallet.

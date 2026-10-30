@@ -11,6 +11,9 @@ import { CopilotDrawer, Spark } from "./CopilotDrawer";
 
 type Tab = "overview" | "evidence" | "drafts" | "timeline";
 
+/** Viewport width from which the Co-Pilot docks beside the case (see console.css). */
+const DOCK_MIN_WIDTH = 1600;
+
 const PROPOSAL_TONE: Record<Proposal["status"], string> = { pending_approval: "brand", approved: "ok", rejected: "bad", returned: "warn" };
 
 export function CasePage() {
@@ -51,7 +54,7 @@ function CaseView({ c }: { c: CaseDetail }) {
   };
   const cite = (id: string) => jump(`ev-${id}`, "evidence");
   const onCite = (r: CopilotRef) => {
-    if (window.innerWidth < 1200) setCopilotOpen(false);
+    if (window.innerWidth < DOCK_MIN_WIDTH) setCopilotOpen(false); // overlay mode: show the record
     if (r.kind === "claim") jump("claim-sec", "overview");
     if (r.kind === "evidence") jump(`ev-${r.id}`, "evidence");
     if (r.kind === "rule") jump(`rule-${r.id}`, "overview");

@@ -359,7 +359,7 @@
       if (panel) showTab(panel.dataset.panel);
       const dr = target.closest('[data-draft]');
       if (dr) { const b = $('#draft-seg [data-d="' + dr.dataset.draft + '"]'); if (b) b.click(); }
-      if (window.innerWidth < 1200) closeCopilot();
+      if (window.innerWidth < 1600) closeCopilot();
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
     });

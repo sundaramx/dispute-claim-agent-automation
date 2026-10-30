@@ -373,7 +373,7 @@ dialog::backdrop{background:rgba(15,23,42,.45);backdrop-filter:blur(2px)}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* Wide screens: the copilot docks beside the case instead of covering it */
-@media(min-width:1200px){
+@media(min-width:1600px){
   .scrim{display:none}
   body.copilot-open .content{padding-right:440px}
   body.copilot-open .fab{display:none}
