@@ -404,3 +404,7 @@ dialog::backdrop{background:rgba(15,23,42,.45);backdrop-filter:blur(2px)}
 .lookups{list-style:none!important;padding:0!important}
 .lookups li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
 .lookups li .note{display:block}
+/* Local model picker, bottom-left */
+.model-picker{display:grid;gap:4px;padding:0 6px}
+.model-picker label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);margin:0}
+.model-picker select{font-size:12px;padding:5px 8px}

@@ -136,6 +136,18 @@ export const useCopilotAction = (ref: string) => {
   return useMutation({ mutationFn: (action: SuggestedAction) => api.runCopilotAction(ref, action), onSettled: () => qc.invalidateQueries() });
 };
 
+export const useLocalModels = () => {
+  const api = useApi();
+  return useQuery({ queryKey: ["local-models"], queryFn: () => api.localModels(), staleTime: 30_000 });
+};
+
+export const useSwitchModel = () => {
+  const api = useApi();
+  const qc = useQueryClient();
+  // Everything the model touches (header badge, briefs, answers) should refresh.
+  return useMutation({ mutationFn: (name: string) => api.useLocalModel(name), onSuccess: () => qc.invalidateQueries() });
+};
+
 export const useInvestigationBrief = (ref: string) => {
   const api = useApi();
   return useQuery({ queryKey: ["brief", ref], queryFn: () => api.investigationBrief(ref) });

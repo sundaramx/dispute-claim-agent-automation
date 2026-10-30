@@ -37,9 +37,18 @@ export interface CopilotRequest extends ModelRequest {
   tool_result?: { lookup: LookupKind; evidence_id: string; finding: string };
 }
 
+export interface LocalModels {
+  current: string;
+  models: { name: string; size_gb: number; params: string }[];
+}
+
 export interface ModelClient {
   /** Model name if the gateway and model are reachable, else null. */
   status(): Promise<string | null>;
+  /** Installed text models and the one in use, or null if the gateway is down. */
+  models(): Promise<LocalModels | null>;
+  /** Route every Co-Pilot task to `name`. */
+  use(name: string): Promise<void>;
   copilotAnswer(req: CopilotRequest): Promise<{ output: ModelCopilotAnswer; meta: ModelMeta }>;
   brief(req: ModelRequest): Promise<{ output: ModelBrief; meta: ModelMeta }>;
 }
@@ -64,6 +73,23 @@ export class LocalModelClient implements ModelClient {
     }
     this.cached = { at: Date.now(), model };
     return model;
+  }
+
+  async models(): Promise<LocalModels | null> {
+    try {
+      const r = await fetch(`${this.base}/models`, { signal: AbortSignal.timeout(3000) });
+      return r.ok ? ((await r.json()) as LocalModels) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async use(name: string): Promise<void> {
+    const r = await fetch(`${this.base}/model`, {
+      method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: name }),
+    });
+    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail ?? `Couldn't switch to ${name}`);
+    this.cached = null; // the next status() reflects the new model
   }
 
   private async post<T>(task: string, body: unknown): Promise<T> {

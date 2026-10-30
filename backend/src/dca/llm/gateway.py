@@ -83,16 +83,36 @@ class Gateway:
         """Ollama routes from env: DCA_OLLAMA_MODEL for every task, and an optional
         DCA_OLLAMA_MODEL_<TASK> per task (e.g. a larger model for the cached brief)."""
         url = os.environ.get("DCA_OLLAMA_URL", "http://localhost:11434")
-        default = os.environ.get("DCA_OLLAMA_MODEL", "qwen2.5:7b")
-        routes: dict[str, list[Provider]] = {"default": [OllamaProvider(url, default)]}
+        default = os.environ.get("DCA_OLLAMA_MODEL", "qwen3.6:27b-mlx")
+        think = os.environ.get("DCA_OLLAMA_THINK", "false").lower() == "true"
+        timeout = float(os.environ.get("DCA_OLLAMA_TIMEOUT_S", "180"))
+
+        def provider(model: str) -> OllamaProvider:
+            return OllamaProvider(url, model, timeout_s=timeout, think=think)
+
+        routes: dict[str, list[Provider]] = {"default": [provider(default)]}
         for task in ("copilot_answer", "investigation_brief"):
             model = os.environ.get(f"DCA_OLLAMA_MODEL_{task.upper()}")
             if model and model != default:
-                routes[task] = [OllamaProvider(url, model, timeout_s=300)]
+                routes[task] = [provider(model)]
         return cls(routes)
 
     def providers(self, task: str) -> list[Provider]:
         return self._routes.get(task) or self._routes["default"]
+
+    def use_model(self, model: str) -> None:
+        """Route every task to `model` on the same Ollama host (local model picker, TD-63).
+        Per-task overrides are cleared so the choice applies everywhere."""
+        current = self._routes["default"][0]
+        if not isinstance(current, OllamaProvider):
+            raise TypeError("only Ollama routes can switch models at runtime")
+        self._routes = {
+            "default": [
+                OllamaProvider(
+                    current.base_url, model, timeout_s=current.timeout_s, think=current.think
+                )
+            ]
+        }
 
     async def call[T: BaseModel](
         self, task: str, payload: dict[str, Any], schema: type[T], *, prompt_version: int = 1

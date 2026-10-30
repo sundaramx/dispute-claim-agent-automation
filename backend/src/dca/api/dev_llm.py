@@ -38,6 +38,11 @@ class BriefRequest(_Req):
     pass
 
 
+class ModelChoice(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    model: str = Field(min_length=1, max_length=200)
+
+
 class Meta(BaseModel):
     model: str
     prompt_version: str
@@ -77,6 +82,33 @@ def create_app(gateway: Gateway | None = None) -> FastAPI:
         provider = gw.providers("default")[0]
         ok = await provider.health() if isinstance(provider, OllamaProvider) else True
         return {"ok": ok, "provider": provider.name, "model": provider.model}
+
+    @app.get("/api/dev/llm/models")
+    async def models() -> dict[str, Any]:
+        """Installed text models and the one in use, for the console's model picker."""
+        provider = gw.providers("default")[0]
+        installed = await provider.list_models() if isinstance(provider, OllamaProvider) else []
+        return {
+            "current": provider.model,
+            "models": [
+                {
+                    "name": m.name,
+                    "size_gb": round(m.size_bytes / 1e9, 1),
+                    "params": m.parameter_size,
+                }
+                for m in installed
+            ],
+        }
+
+    @app.put("/api/dev/llm/model", response_model=None)
+    async def choose_model(choice: ModelChoice) -> dict[str, Any] | JSONResponse:
+        provider = gw.providers("default")[0]
+        if not isinstance(provider, OllamaProvider):
+            return _problem(409, "not_switchable", "This gateway route can't switch models.")
+        if choice.model not in {m.name for m in await provider.list_models()}:
+            return _problem(422, "model_not_installed", f"{choice.model} isn't installed.")
+        gw.use_model(choice.model)
+        return {"current": choice.model}
 
     @app.post("/api/dev/llm/copilot_answer", response_model=None)
     async def copilot_answer(req: CopilotRequest) -> dict[str, Any] | JSONResponse:

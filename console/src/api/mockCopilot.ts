@@ -16,6 +16,8 @@ const money = (minor: number | null) => (minor === null ? "" : (minor / 100).toL
 /** The refs the copilot may cite: built by code from the case, scoped by role (FR-36 AC 2). */
 export function bundleRefs(c: CaseDetail, role: Role): CopilotRef[] {
   const refs: CopilotRef[] = [
+    // The cardholder's own statement is a source too ("the cardholder says...").
+    { kind: "claim", id: "claim", label: "claim" },
     ...c.evidence.map((e) => ({ kind: "evidence" as const, id: e.id, label: e.id })),
     ...(c.decision?.trace ?? []).map((t) => ({ kind: "rule" as const, id: t.ruleId, label: t.ruleId })),
     ...c.clocks.map((k) => ({ kind: "clock" as const, id: k.id, label: k.label })),

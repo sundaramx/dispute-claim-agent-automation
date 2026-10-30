@@ -1,19 +1,11 @@
 import { SEEDED_USERS } from "../auth/session";
-import type { CopilotRequest, ModelBrief, ModelClient, ModelCopilotAnswer, ModelMeta, ModelRequest } from "./localModel";
+import type { ModelBrief, ModelClient, ModelCopilotAnswer } from "./localModel";
+import { FakeModel } from "../test/fakeModel";
 import { MockApi } from "./mockApi";
 import { CANT_ANSWER } from "./mockCopilot";
 
-const META: ModelMeta = { model: "ollama:qwen2.5:7b", prompt_version: "copilot_answer.v1", attempts: 1, latency_ms: 900, input_tokens: 1400, output_tokens: 60 };
 const answer = (a: Partial<ModelCopilotAnswer>): ModelCopilotAnswer => ({ sentences: [], lookup: null, suggested_actions: [], self_score: 0.9, ...a });
 
-class FakeModel implements ModelClient {
-  calls: CopilotRequest[] = [];
-  briefs: ModelRequest[] = [];
-  constructor(private answers: ModelCopilotAnswer[], private brief_?: ModelBrief, private up = true) {}
-  async status() { return this.up ? "qwen2.5:7b" : null; }
-  async copilotAnswer(req: CopilotRequest) { this.calls.push(req); return { output: this.answers.shift()!, meta: META }; }
-  async brief(req: ModelRequest) { this.briefs.push(req); if (!this.brief_) throw new Error("502"); return { output: this.brief_, meta: META }; }
-}
 
 const api = (model: ModelClient, user = "analyst1") => new MockApi(() => SEEDED_USERS.find((u) => u.id === user)!, { model });
 const REF = "DSP-2026-000412";
@@ -36,6 +28,16 @@ describe("Co-Pilot with a local model (TD-60)", () => {
     const turn = await api(new FakeModel([answer({})])).askCopilot(REF, "When is the chargeback due?");
     expect(turn.sentences[0].cites.map((r) => r.id)).toEqual(["clk-visa", "P-3"]);
     expect(turn.meta).toBe("ollama:qwen2.5:7b gave no cited answer · rule-based answer");
+  });
+
+  it("normalizes dotted field paths and accepts the claim as a source", async () => {
+    const m = new FakeModel([answer({ sentences: [
+      { text: "The cardholder says the card was in their wallet.", cites: ["case.claim"] },
+      { text: "Terminal read not checked yet.", cites: ["lookups_available.terminal_read", "E-2"] },
+      { text: "Only a path.", cites: ["lookups_available.terminal_read"] },
+    ] })]);
+    const turn = await api(m).askCopilot(REF, "what does the cardholder say?");
+    expect(turn.sentences.map((s) => s.cites.map((r) => `${r.kind}:${r.id}`))).toEqual([["claim:claim"], ["evidence:E-2"]]);
   });
 
   it("drops sentences that cite records not on the case", async () => {
@@ -107,6 +109,25 @@ describe("Co-Pilot with a local model (TD-60)", () => {
       ["Check terminal.", false, "lookup"], // "done" corrected: the lookup hasn't run
       ["Decide credit.", false, "proposal"],
     ]);
+  });
+
+  it("doesn't repeat a rule item the model already covered", async () => {
+    const brief: ModelBrief = {
+      headline: "h", findings: [{ text: "f", cites: ["E-1"] }], conflicts: [], risks: [], plan: [], self_score: 1,
+      gaps: [{ text: "The affidavit is missing; a request is drafted.", cites: ["E-5", "D-2"] }],
+    };
+    const b = await api(new FakeModel([], brief)).investigationBrief(REF);
+    expect(b.gaps.map((g) => g.source)).toEqual(["model"]); // the rule gap cites only E-5
+  });
+
+  it("doesn't serve one model's cached brief after switching models", async () => {
+    const brief: ModelBrief = { headline: "h", findings: [{ text: "f", cites: ["E-1"] }], gaps: [], conflicts: [], risks: [], plan: [], self_score: 1 };
+    const m = new FakeModel([], brief);
+    const a = api(m);
+    await a.investigationBrief(REF);
+    await a.useLocalModel("qwen3.6:27b-mlx");
+    await a.investigationBrief(REF);
+    expect(m.briefs).toHaveLength(2);
   });
 
   it("caches the brief until the case changes", async () => {

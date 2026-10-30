@@ -4,6 +4,7 @@ import { useInbox, useSystemInfo } from "../api/hooks";
 import type { Role } from "../api/types";
 import { initials, ROLE_LABEL } from "../auth/permissions";
 import { useSession, useUser } from "../auth/session";
+import { ModelPicker } from "./ModelPicker";
 import { Pill } from "./ui";
 
 const ICON: Record<string, ReactNode> = {
@@ -53,6 +54,7 @@ export function Shell() {
         </nav>
         <div className="side-foot">
           <div className="who"><span className="avatar">{initials(user)}</span><div><b>{user.displayName}</b><span>{ROLE_LABEL[user.role]}</span></div></div>
+          <ModelPicker />
           <button className="btn sec sm" type="button" onClick={signOut}>Sign out</button>
         </div>
       </aside>

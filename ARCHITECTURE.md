@@ -713,7 +713,7 @@ The agent receives only the typed output. It never sees provider objects, and it
 
 | Provider | Implementation | Notes |
 |---|---|---|
-| `ollama` (**local default**) | httpx → Ollama `/api/chat` with `format: <json schema>` | Default model is set in config (`qwen2.5:7b-instruct`, TD-16). Runs on the host or in the compose `ollama` profile. Region `local` |
+| `ollama` (**local default**) | httpx → Ollama `/api/chat` with `format: <json schema>` | Default model is set in config: `qwen3.6:27b-mlx` with reasoning off (TD-62, superseding TD-16's `qwen2.5:7b-instruct`); `qwen2.5:7b` on smaller machines. Runs on the host or in the compose `ollama` profile. Region `local` |
 | `bedrock` | `anthropic.AsyncAnthropicBedrock`, natively async. `model` = **full application-inference-profile ARN** from config/env | **Guardrail headers are mandatory.** `X-Amzn-Bedrock-GuardrailIdentifier` / `-GuardrailVersion` are taken from config, and config validation **rejects** a Bedrock provider without them (the vendored client treats them as optional, which is tightened here). Credentials come from the configured `aws.authRefreshCmd`, executed as an argv list (no shell), with TTL-based client refresh (default 25 min) and one forced refresh + retry on auth errors. No ARN, account, profile, role or guardrail ID is ever hard-coded |
 | `gemini` | `google-genai` SDK with `response_schema` | API key from secrets. US region endpoint declared in config |
 | `openai_compat` | `openai` SDK with `base_url` | Any OpenAI-compatible endpoint (vLLM, LM Studio, hosted). Declared region |

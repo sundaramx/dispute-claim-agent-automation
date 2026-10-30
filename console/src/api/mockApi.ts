@@ -346,7 +346,7 @@ export class MockApi implements DisputeApi {
     const model = await this.modelName();
     if (!this.model || !model) return this.respond({ ...rules, fallbackReason: "Local model unavailable: showing rule-based checks only." });
     // Regenerate only when what the model would see changes.
-    const key = JSON.stringify([user.role, caseBundle(c, user.role), lookupsForModel(c)]);
+    const key = JSON.stringify([model, user.role, caseBundle(c, user.role), lookupsForModel(c)]);
     const hit = this.briefCache.get(key);
     if (hit) return this.respond(hit);
     try {
@@ -388,6 +388,22 @@ export class MockApi implements DisputeApi {
       }
     }
     return this.respond(c);
+  }
+
+  async localModels(): Promise<{ current: string; available: { name: string; detail: string }[] } | null> {
+    this.user();
+    const m = this.model ? await this.model.models() : null;
+    if (!m) return null;
+    return this.respond({
+      current: m.current,
+      available: m.models.map((x) => ({ name: x.name, detail: [x.params, `${x.size_gb} GB`].filter(Boolean).join(" · ") })),
+    });
+  }
+
+  async useLocalModel(name: string): Promise<void> {
+    this.user();
+    if (!this.model) throw new ProblemError(409, "no_local_model", "No local model gateway is configured.");
+    await this.model.use(name);
   }
 
   async dashboard(): Promise<Dashboard> {

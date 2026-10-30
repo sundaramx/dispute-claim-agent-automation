@@ -956,3 +956,32 @@ The human did not state these values. Discovery (`docs/DISCOVERY.md`, marked *(i
   - **One place to look.** Every card-number literal in the repo is in a fixture file or the prototype's demo copy.
   - **Gave up:** a little indirection in tests (they import the number instead of inlining it).
 - **Date:** 2026-10-29
+
+## TD-62 — Local default model: qwen3.6 27B with reasoning off *(build-time; supersedes TD-16's local default model)*
+
+- **Decision:** Which local model the gateway uses by default for the Co-Pilot tasks.
+- **Options considered:**
+  - `qwen2.5:7b` (TD-16's default)
+  - `qwen3.6:27b-mlx` with reasoning on (Ollama's default for this model)
+  - `qwen3.6:27b-mlx` with reasoning off (`"think": false`)
+- **Choice made:** 27B with reasoning off, as the default for every task (`DCA_OLLAMA_MODEL`). Reasoning stays configurable (`DCA_OLLAMA_THINK`), and smaller machines set `DCA_OLLAMA_MODEL=qwen2.5:7b`. If the configured model isn't pulled, the bridge reports unhealthy and the Co-Pilot falls back to labelled rule-based answers.
+- **Why:** measured on the same hard case (DSP-2026-000412 after two lookups, with conversation history):
+  - **Quality.** 27B answered 4 of 4 questions correctly with valid citations, including a follow-up and the refusal to approve; 7B answered 1 of 4.
+  - **Speed.** With reasoning on, 27B took 40–70 s per answer; with it off, about 3 s per answer and 25–30 s per brief. A trivial reply went from 158 generated tokens to 5.
+  - **Brief.** 27B identifies the card-present-versus-wallet conflict itself once the terminal lookup is in; 7B never did.
+  - **Gave up:** about 19 GB of memory and roughly 3x the latency of 7B per answer. The brief is cached per case version, so its 25–30 s is paid once per change.
+- **Date:** 2026-10-29
+
+## TD-63 — Local model picker in the console *(build-time, requested by the human 2026-10-29)*
+
+- **Decision:** Where and how to switch the model behind the Co-Pilot during local development.
+- **Options considered:**
+  - Environment variables only, restart the bridge to switch
+  - A picker in the console sidebar (bottom-left) for every role, backed by the local bridge
+  - Only in the Admin configuration page, versioned like other config
+- **Choice made:** the sidebar picker. The bridge lists installed text models from Ollama (`GET /api/dev/llm/models`, embedding models excluded) and switches every task's route at runtime (`PUT /api/dev/llm/model`), refusing a model that isn't installed. The console caches briefs per model, so switching regenerates them.
+- **Why:**
+  - **Comparing models is the point of local development.** The measurements in TD-62 came from switching between models; a picker makes that a click.
+  - **It stays local.** The bridge only runs with `DCA_ENV=local`, so the picker can't exist anywhere else.
+  - **Gave up:** role restriction and audit for this switch. In hosted environments model routing remains Admin configuration (FR-25, FR-29 AC 3), versioned and audited; the picker must not be carried there.
+- **Date:** 2026-10-29

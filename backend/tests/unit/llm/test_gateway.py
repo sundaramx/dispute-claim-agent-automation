@@ -119,6 +119,7 @@ async def test_ollama_provider_request_shape() -> None:
     p = OllamaProvider("http://ollama.test", "qwen2.5:7b", transport=httpx.MockTransport(handler))
     reply = await p.chat("sys", "user", {"type": "object"})
     assert seen["format"] == {"type": "object"} and seen["stream"] is False
+    assert seen["think"] is False  # reasoning off unless configured
     assert seen["options"]["temperature"] == 0 and seen["options"]["num_ctx"] >= 8192
     assert (reply.model, reply.input_tokens, reply.output_tokens) == ("ollama:qwen2.5:7b", 12, 3)
 
@@ -132,6 +133,8 @@ async def test_ollama_provider_wraps_http_errors() -> None:
 
 
 def test_routes_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("DCA_OLLAMA_MODEL", raising=False)
+    assert Gateway.from_env().providers("copilot_answer")[0].model == "qwen3.6:27b-mlx"  # TD-62
     monkeypatch.setenv("DCA_OLLAMA_MODEL", "qwen2.5:7b")
     monkeypatch.setenv("DCA_OLLAMA_MODEL_INVESTIGATION_BRIEF", "qwen3.6:27b-mlx")
     gw = Gateway.from_env()

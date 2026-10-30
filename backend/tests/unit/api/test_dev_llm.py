@@ -45,3 +45,63 @@ def test_rejects_unknown_request_fields(monkeypatch: pytest.MonkeyPatch) -> None
         ).status_code
         == 422
     )
+
+
+TAGS = {
+    "models": [
+        {
+            "name": "qwen2.5:7b",
+            "size": 4_700_000_000,
+            "capabilities": ["completion", "tools"],
+            "details": {"parameter_size": "7.6B"},
+        },
+        {"name": "nomic-embed-text:latest", "size": 270_000_000, "capabilities": ["embedding"]},
+        {"name": "qwen3.6:27b-mlx", "size": 19_800_000_000, "capabilities": ["completion"]},
+    ]
+}
+
+
+def _ollama_app(monkeypatch: pytest.MonkeyPatch, seen: list[str]) -> TestClient:
+    import httpx
+
+    from dca.llm.providers.ollama import OllamaProvider
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json=TAGS)
+        seen.append(json.loads(request.content)["model"])
+        return httpx.Response(
+            200, json={"model": seen[-1], "message": {"content": json.dumps(VALID)}}
+        )
+
+    real_init = OllamaProvider.__init__
+
+    def init(self: OllamaProvider, *args: object, **kwargs: object) -> None:
+        kwargs["transport"] = httpx.MockTransport(handler)
+        real_init(self, *args, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(OllamaProvider, "__init__", init)
+    monkeypatch.setenv("DCA_ENV", "local")
+    monkeypatch.setenv("DCA_OLLAMA_MODEL", "qwen3.6:27b-mlx")
+    return TestClient(create_app(Gateway.from_env()))
+
+
+def test_lists_text_models_only_and_switches(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: list[str] = []
+    client = _ollama_app(monkeypatch, seen)
+    r = client.get("/api/dev/llm/models").json()
+    assert r["current"] == "qwen3.6:27b-mlx"
+    assert [m["name"] for m in r["models"]] == ["qwen2.5:7b", "qwen3.6:27b-mlx"]  # no embedder
+    assert client.put("/api/dev/llm/model", json={"model": "qwen2.5:7b"}).json() == {
+        "current": "qwen2.5:7b"
+    }
+    client.post("/api/dev/llm/copilot_answer", json={"case": {}, "question": "q"})
+    assert seen == ["qwen2.5:7b"]
+    assert client.get("/api/dev/llm/health").json()["model"] == "qwen2.5:7b"
+
+
+def test_refuses_a_model_that_isnt_installed(monkeypatch: pytest.MonkeyPatch) -> None:
+    client = _ollama_app(monkeypatch, [])
+    r = client.put("/api/dev/llm/model", json={"model": "nomic-embed-text:latest"})
+    assert r.status_code == 422 and r.json()["code"] == "model_not_installed"
+    assert client.put("/api/dev/llm/model", json={"model": "evil:latest"}).status_code == 422

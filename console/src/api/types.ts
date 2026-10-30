@@ -185,7 +185,7 @@ export class ProblemError extends Error {
 // ---- Case copilot (FR-36, CR-1) ----
 /** Something on the case a copilot sentence points at. Every factual sentence cites at least one. */
 export interface CopilotRef {
-  kind: "evidence" | "rule" | "clock" | "proposal" | "draft";
+  kind: "claim" | "evidence" | "rule" | "clock" | "proposal" | "draft";
   id: string;
   label: string;
 }
@@ -348,6 +348,9 @@ export interface DisputeApi {
   runCopilotAction(ref: string, action: SuggestedAction): Promise<CaseDetail>;
   investigationBrief(ref: string): Promise<InvestigationBrief>;
   runLookup(ref: string, kind: LookupKind): Promise<EvidenceItem>;
+  /** Local model picker (dev only, TD-63): null when no model gateway is reachable. */
+  localModels(): Promise<{ current: string; available: { name: string; detail: string }[] } | null>;
+  useLocalModel(name: string): Promise<void>;
   dashboard(): Promise<Dashboard>;
   createDispute(input: NewDispute, idempotencyKey: string): Promise<CaseSummary>;
   auditEvents(query?: AuditQuery): Promise<AuditEvent[]>;

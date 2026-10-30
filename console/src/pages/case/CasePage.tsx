@@ -52,6 +52,7 @@ function CaseView({ c }: { c: CaseDetail }) {
   const cite = (id: string) => jump(`ev-${id}`, "evidence");
   const onCite = (r: CopilotRef) => {
     if (window.innerWidth < 1200) setCopilotOpen(false);
+    if (r.kind === "claim") jump("claim-sec", "overview");
     if (r.kind === "evidence") jump(`ev-${r.id}`, "evidence");
     if (r.kind === "rule") jump(`rule-${r.id}`, "overview");
     if (r.kind === "draft") jump(`draft-${r.id}`, "drafts");
@@ -138,7 +139,7 @@ function CaseView({ c }: { c: CaseDetail }) {
           {tab === "overview" && (
             <section className="card-b" role="tabpanel" aria-label="Overview">
               <div className="grid g2">
-                <div>
+                <div id="claim-sec" tabIndex={-1}>
                   <h3 style={{ marginTop: 0 }}>Claim</h3>
                   <dl className="kv">
                     <dt>Transaction</dt><dd>{c.claim.merchant}<br /><span className="muted small">{c.claim.txnDate} · {money(c.amountMinor)} · {c.claim.txnRef}</span> {c.claim.matched ? <Pill tone="ok">matched</Pill> : <Pill tone="warn">unmatched</Pill>}</dd>

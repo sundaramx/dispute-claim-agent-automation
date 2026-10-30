@@ -37,11 +37,13 @@ function resolver(c: CaseDetail, role: Role) {
   return (id: string): CopilotRef | undefined => refs.find((r) => r.id === id);
 }
 
-// Names of fields in the request the model sees. Small models sometimes "cite" these; that is a
-// reference to the input's structure, not an invented record, so it is dropped rather than
-// failing the sentence. Any other ID that doesn't resolve to this case still rejects it.
-const PAYLOAD_FIELDS = new Set(["case", "claim", "evidence", "decision", "rules", "clocks", "proposals", "drafts", "lookups_available", "tool_result", "question", "history"]);
-const citable = (ids: string[]) => ids.filter((id) => !PAYLOAD_FIELDS.has(id));
+// Names of fields in the request the model sees. Models sometimes "cite" these, alone or as a
+// dotted path ("lookups_available.terminal_read"); that is a reference to the input's
+// structure, not an invented record, so it is dropped rather than failing the sentence.
+// "case.claim" is normalized to the claim. Any other ID that doesn't resolve still rejects it.
+const PAYLOAD_FIELDS = new Set(["case", "evidence", "decision", "rules", "clocks", "proposals", "drafts", "lookups_available", "tool_result", "question", "history"]);
+const citable = (ids: string[]) =>
+  ids.map((id) => id.replace(/^case\./, "")).filter((id) => !PAYLOAD_FIELDS.has(id.split(".")[0]));
 
 /** Strict: every cite must resolve to this case, and there must be at least one (FR-36 AC 3). */
 function strict(items: ModelCited[], resolve: (id: string) => CopilotRef | undefined): CitedText[] {
@@ -64,8 +66,9 @@ export function validateAnswer(out: ModelCopilotAnswer, c: CaseDetail, role: Rol
   return { sentences, actions };
 }
 
-const sameCites = (a: CitedText, b: CitedText) => a.cites.map((r) => r.id).sort().join() === b.cites.map((r) => r.id).sort().join();
-const merge = <T extends CitedText>(model: T[], rules: T[]) => [...model, ...rules.filter((r) => !model.some((m) => sameCites(m, r)))];
+/** A rule item is already covered when some model item cites everything it cites. */
+const covers = (m: CitedText, r: CitedText) => r.cites.every((x) => m.cites.some((y) => y.kind === x.kind && y.id === x.id));
+const merge = <T extends CitedText>(model: T[], rules: T[]) => [...model, ...rules.filter((r) => !model.some((m) => covers(m, r)))];
 
 /** Accept the model's brief only as far as it resolves; add deterministic checks the model missed. */
 export function validateBrief(out: ModelBrief, c: CaseDetail, role: Role, rules: InvestigationBrief, model: string): InvestigationBrief {
